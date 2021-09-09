@@ -1,7 +1,10 @@
 from random import randint
 from os import remove, rename
 
-
+'''
+This function takes a userName as parameter and returns the score for that user if the userName is already in
+ our data store, else -1 is returned
+'''
 def getUserPoint(userName: str) -> str:
     f, line = None, ''
     try:
@@ -22,11 +25,14 @@ def getUserPoint(userName: str) -> str:
     return '-1'
 
 
+'''
+upsert() --> if the user is new, then username and score are appended to the end of our data store, else we update the user's score
+'''
 def updateUserPoints(newUser: bool, userName: str, score: str) -> None:
     f = open('userScores.txt', 'a')
     
     if newUser:
-        f.write('\nuserName, score')
+        f.write('\n'+userName, score)
         f.close()
         return
     
@@ -41,24 +47,31 @@ def updateUserPoints(newUser: bool, userName: str, score: str) -> None:
     rename('userScores.tmp', 'userScores.txt')
 
 
-
+'''
+Generates an algebraic question with 5 operands and 4 operators
+'''
 def generateQuestions():
-    operandList, operatorList = list(randint(1, 9) for i in range(5)), list()
-    operatorDict = dict({1:'+'}, {2:'-'}, {3:'*'}, {4:'**'})
-
+    operandList, operatorList = [randint(1, 9) for i in range(0,5)], list()
+    operatorDict = dict()
+    operatorDict.update({1:'+'})
+    operatorDict.update({2:'-'})
+    operatorDict.update({3:'*'})
+    operatorDict.update({4:'**'})
+    print(operandList)
+    print(operatorDict)
     prev = ''
-    for i in range(4):
-        curr = operatorDict.get(randint(1,4))
+    for i in range(0,4):
+        curr = operatorDict[randint(1,4)]
         if i > 0:
             prev = operatorList[i-1]
         if prev == '**' and curr == '**':
             continue
         operatorList.append(curr)
         prev = curr
-    
-    questionStr = operandList[0]
+    print(operatorList)
+    questionStr = str(operandList[0])
     for i in range(len(operatorList)):
-        questionStr += operatorList[i] + operandList[i+1]
+        questionStr += (str(operatorList[i]) + str(operandList[i+1]))
     
     result = eval(questionStr)
     questionStr = questionStr.replace("**", "^")
@@ -68,6 +81,7 @@ def generateQuestions():
     while True:
         try:
             userInput = int(userInput)
+            break
         except:
             print("please enter a valid numerical answer")
             userInput = input("Type your answer: ")
@@ -77,4 +91,4 @@ def generateQuestions():
     else:
         print(0)
     
-    return questionStr
+    return int(result)
